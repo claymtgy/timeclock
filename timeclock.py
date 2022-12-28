@@ -1,49 +1,34 @@
-import csv
-import datetime, time
+import csv, datetime, time, tk
+#import tkinter as tk
+import customtkinter as ctk
+from timeclock_functions import clock_in, clock_out, get_total_time
 
-date = datetime.datetime.now().date() 
+date = datetime.datetime.now().date()
 
-def clock_in():
-  date = datetime.datetime.now().date()
-  time = datetime.datetime.now().time()
-  with open("time_clocks.csv", "a", newline="") as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow([date, time, ""])
-  print(f"Clocked in at {time} on {date}")
-  return date
+timeclock = ctk.CTk()
+timeclock.geometry('400x240')
 
+in_button = ctk.CTkButton(master=timeclock, text='Clock In', command = clock_in)
+out_button = ctk.CTkButton(master=timeclock, text='Clock Out', command = clock_out)
 
-def clock_out():
-  date = datetime.datetime.now().date()
-  time = datetime.datetime.now().time()
-  with open("time_clocks.csv", "r", newline="") as csvfile:
-    reader = csv.reader(csvfile)
-    rows = list(reader)
-  with open("time_clocks.csv", "w", newline="") as csvfile:
-    writer = csv.writer(csvfile)
-    for row in rows:
-      if row[0] == str(date) and row[1] != "":
-        row[2] = time
-      writer.writerow(row)
-  print(f"Clocked out at {time} on {date}")
+in_button.place(relx = 0.5, rely = 0.25, anchor = "center")
+out_button.place(relx = 0.5, rely = 0.5, anchor = "center")
 
-print(date)
 clock_in()
-time.sleep(5)
+time.sleep(1)
 clock_out()
-print("done!")
+get_total_time()
 
-def get_total_time(date):
-  total_time = 0 
-  with open("time_clocks.csv", "r", newline="") as csvfile:
+## Get the last total time
+with open("time_clocks.csv", "r", newline="") as csvfile:
     reader = csv.reader(csvfile)
     rows = list(reader)
-  for row in rows:
-    if row[0] == str(date):
-      clock_in_time = datetime.datetime.strptime(row[1], "%H:%M:%S").time()
-      clock_out_time = datetime.datetime.strptime(row[2], "%H:%M:%S").time()
-      total_time += datetime.datetime.combine(date, clock_out_time) - datetime.datetime.combine(date, clock_in_time)
-  return total_time
+    last_time = rows[-1]
+    print(last_time)
 
-get_total_time(date)
-print(total_time)
+#last_time = 
+last_time_label = ctk.CTkLabel(master=timeclock, text = last_time, anchor = "center")
+
+last_time_label.place(relx = 0.5, rely = .10, anchor = "center")
+
+timeclock.mainloop()
