@@ -1,0 +1,3 @@
+pip installer
+
+use pip to install customtkinter, tk (or tkinter)
