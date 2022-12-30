@@ -1,34 +1,42 @@
-import csv, datetime, time, tk
+import csv, datetime, time, os.path, tk
 #import tkinter as tk
 import customtkinter as ctk
-from timeclock_functions import clock_in, clock_out, get_total_time
+from timeclock_functions import clock_in, clock_out, get_total_time, csv_file, get_last_time, check_for_csv
 
 date = datetime.datetime.now().date()
+last_time = ''
+
+csv_file = r'~/repos/TimeClock/timeclock.csv'
+
+flag = os.path.isfile(csv_file)
+if flag:
+    print(f"The file exists")
+else:
+    print("The file does not exist, creating file")
+    with open('time_clocks.csv', 'w') as creating_new_file:
+        pass
+    print("New file created")
 
 timeclock = ctk.CTk()
 timeclock.geometry('400x240')
 
+user_options = ["Katrina", "Clayton"]
+
+combo = ctk.CTkComboBox(master = timeclock, state = "readonly", values = user_options)
+
 in_button = ctk.CTkButton(master=timeclock, text='Clock In', command = clock_in)
 out_button = ctk.CTkButton(master=timeclock, text='Clock Out', command = clock_out)
 
-in_button.place(relx = 0.5, rely = 0.25, anchor = "center")
-out_button.place(relx = 0.5, rely = 0.5, anchor = "center")
+combo.pack(padx = 20, pady = 5)
+in_button.pack(padx = 20, pady = 15)
+out_button.pack(padx = 20, pady = 20)
 
-clock_in()
-time.sleep(1)
-clock_out()
-get_total_time()
+get_last_time()
 
-## Get the last total time
-with open("time_clocks.csv", "r", newline="") as csvfile:
-    reader = csv.reader(csvfile)
-    rows = list(reader)
-    last_time = rows[-1]
-    print(last_time)
-
-#last_time = 
 last_time_label = ctk.CTkLabel(master=timeclock, text = last_time, anchor = "center")
 
-last_time_label.place(relx = 0.5, rely = .10, anchor = "center")
+last_time_label.pack(padx = 20, pady = 10)
 
 timeclock.mainloop()
+
+#return_time
